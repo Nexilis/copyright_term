@@ -26,15 +26,7 @@ fn main() {
 
     let calendar = gen_calendar(days as usize);
 
-    println!("Copyright hours");
-    for x in &calendar {
-        println!("{}", x);
-    }
-
-    println!("Remaining hours");
-    for x in &calendar {
-        println!("{}", 8 - *x);
-    }
+    print(&calendar);
 }
 
 fn gen_calendar(days: usize) -> Vec<i32> {
@@ -57,6 +49,27 @@ fn gen_calendar(days: usize) -> Vec<i32> {
         }
     }
     return calendar;
+}
+
+fn print(calendar: &Vec<i32>) {
+    let breaks = vec![5, 2, 5, 2, 5, 2, 5];
+
+    print_copyright(&calendar, &breaks);
+    print_remaining(&calendar, &breaks);
+}
+
+fn print_copyright(calendar: &Vec<i32>, breaks: &Vec<i32>) {
+    println!("Copyright hours");
+    for x in calendar {
+        println!("{}", x);
+    }
+}
+
+fn print_remaining(calendar: &Vec<i32>, breaks: &Vec<i32>) {
+    println!("Remaining hours");
+    for x in calendar {
+        println!("{}", 8 - *x);
+    }
 }
 
 #[cfg(test)]
