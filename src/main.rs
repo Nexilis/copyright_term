@@ -2,7 +2,7 @@ use rand::Rng;
 use std::{cmp, io};
 
 fn main() {
-    println!("For how many days: ");
+    println!("Type the number of work days (default 20)");
     let mut days = String::new();
     io::stdin()
         .read_line(&mut days)
@@ -24,7 +24,7 @@ fn main() {
         under, non, precise,
     );
 
-    let calendar = gen_calendar(days as usize, under as i32);
+    let calendar = gen_calendar(days as usize);
 
     println!("Copyright hours");
     for x in &calendar {
@@ -37,9 +37,10 @@ fn main() {
     }
 }
 
-fn gen_calendar(days: usize, mut remaining: i32) -> Vec<i32> {
+fn gen_calendar(days: usize) -> Vec<i32> {
+    let hours = (days * 8) as f32;
+    let mut remaining = (hours * 0.8).floor() as i32;
     let mut calendar = vec![0; days];
-    let mut i_count = 0;
     while remaining > 0 {
         let index = rand::thread_rng().gen_range(0, days);
         let val = calendar[index];
@@ -54,16 +55,24 @@ fn gen_calendar(days: usize, mut remaining: i32) -> Vec<i32> {
             calendar[index] = val + 1;
             remaining -= 1;
         }
-        i_count += 1;
     }
-    println!("Iterations: {}", i_count);
     return calendar;
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::gen_calendar;
+
     #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
+    fn sum_of_hours_under_copyright_is_correct() {
+        let days = (0..101);
+        for d in days {
+            println!("Testing days: {}", d);
+            let expected: i32 = (d as f32 * 8. * 0.8).floor() as i32;
+
+            let actual = gen_calendar(d).iter().sum();
+
+            assert_eq!(expected, actual);
+        }
     }
 }
