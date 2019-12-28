@@ -2,17 +2,29 @@ use rand::Rng;
 use std::{cmp, io};
 
 fn main() {
-    println!("Type the number of work days (default 20)");
-    let mut days = String::new();
-    io::stdin()
-        .read_line(&mut days)
-        .expect("Failed to read line!");
-    let days: u32 = match days.trim().parse() {
-        Ok(num) => num,
-        Err(_) => 20,
-    };
+    println!("Type the number of work days with breaks, e.g. 5;2;5");
+    let mut user_input = String::new();
+    io::stdin().read_line(&mut user_input).expect("Error reading line");
 
-    let hours = (days * 8) as f32;
+    let x1: Vec<&str> = user_input.split(';').collect();
+
+    let days_with_splits: Vec<i32> = x1
+        .iter()
+        .map(|x| x.trim().parse().expect("Wrong input"))
+        .collect();
+
+    let mut index = 0;
+    let days: i32 = days_with_splits.iter().fold(0, |acc, x| {
+        if index % 2 == 0 {
+            index += 1;
+            acc + *x
+        } else {
+            index += 1;
+            acc
+        }
+    });
+
+    let hours = (days * 8) as f64;
     let under = (hours * 0.8).floor();
     let non = hours - under;
     let precise = under / hours;
@@ -26,7 +38,7 @@ fn main() {
 
     let calendar = gen_calendar(days as usize);
 
-    print(&calendar);
+    print(&calendar, &days_with_splits);
 }
 
 fn gen_calendar(days: usize) -> Vec<i32> {
@@ -51,24 +63,35 @@ fn gen_calendar(days: usize) -> Vec<i32> {
     return calendar;
 }
 
-fn print(calendar: &Vec<i32>) {
-    let breaks = vec![5, 2, 5, 2, 5, 2, 5];
-
-    print_copyright(&calendar, &breaks);
-    print_remaining(&calendar, &breaks);
+fn print(calendar: &Vec<i32>, breaks: &Vec<i32>) {
+    print_with_breaks(&calendar, &breaks);
+    let remaining: Vec<i32> = calendar.iter().map(|x| 8 - *x).collect();
+    print_with_breaks(&remaining, &breaks);
 }
 
-fn print_copyright(calendar: &Vec<i32>, breaks: &Vec<i32>) {
+fn print_with_breaks(calendar: &Vec<i32>, breaks: &Vec<i32>) {
     println!("Copyright hours");
-    for x in calendar {
-        println!("{}", x);
-    }
-}
 
-fn print_remaining(calendar: &Vec<i32>, breaks: &Vec<i32>) {
-    println!("Remaining hours");
-    for x in calendar {
-        println!("{}", 8 - *x);
+    //let lines: i32 = breaks.iter().sum();
+
+    let mut index = 0;
+    let mut presented = 0;
+    for pair in breaks.iter().map(|x| {
+        index += 1;
+        (index, *x)
+    }) {
+        let (i, val) = pair;
+
+        if i % 2 != 0 {
+            for x in calendar.iter().skip(presented).take(val as usize) {
+                println!("{}", *x);
+            }
+            presented += val as usize;
+        } else {
+            for _ in 0..val {
+                println!(" ");
+            }
+        }
     }
 }
 
