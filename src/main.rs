@@ -2,8 +2,10 @@ use rand::Rng;
 use std::{cmp, io};
 
 fn main() {
-    println!("Type a number of days in a work period alternately with a number of days in a workless period, e.g. 5;2;5 where the first number is for the work period:");
-    let mut user_input = String::new();
+    println!("Welcome to Copyright Term Calculator.\nCheck https://github.com/Nexilis/copyright_term for the newest version.\n\n");
+    println!("Type a number of days in a work period alternately with a number of days in a workless period. The first number is for the work period, i.e. '5;2;5' would mean: 5 working days, 2 free days, 5 working days.");
+    println!("If you type nothing the default is going to be '5;2;5;2;5;2;5'");
+    let mut user_input = String::from("5;2;5;2;5;2;5");
     io::stdin()
         .read_line(&mut user_input)
         .expect("Error reading line");
@@ -42,22 +44,20 @@ fn main() {
 }
 
 fn gen_calendar(days: usize) -> Vec<usize> {
-    let hours_total = (days * 8) as f64;
-    let mut remaining_hours_total = (hours_total * 0.8).floor() as usize;
+    let h_total = (days * 8) as f64;
+    let mut remaining_h_total = (h_total * 0.8).floor() as usize;
     let mut calendar = vec![0; days];
-    while remaining_hours_total > 0 {
+    while remaining_h_total > 0 {
         let i = rand::thread_rng().gen_range(0, days);
-        let work_hours_in_day_i = calendar[i];
+        let copyrighted_h = calendar[i];
 
-        if work_hours_in_day_i == 0 {
-            let max_additional_hours_for_day_i = cmp::min(remaining_hours_total + 1, 9);
-            let hours_for_day_i = rand::thread_rng().gen_range(0, max_additional_hours_for_day_i);
-            calendar[i] = hours_for_day_i;
-            remaining_hours_total = remaining_hours_total - hours_for_day_i;
-        } else if work_hours_in_day_i >= 8 {
+        if copyrighted_h >= 8 {
         } else {
-            calendar[i] = work_hours_in_day_i + 1;
-            remaining_hours_total -= 1;
+            let not_copyrighted_h = 8 - copyrighted_h;
+            let max_additional_h = cmp::min(remaining_h_total, not_copyrighted_h);
+            let additional_h = rand::thread_rng().gen_range(1, max_additional_h + 1);
+            calendar[i] = copyrighted_h + additional_h;
+            remaining_h_total -= additional_h;
         }
     }
     return calendar;
@@ -100,7 +100,7 @@ mod tests {
     fn sum_of_copyrighted_hours_is_correct() {
         let days = 0..101;
         for d in days {
-            println!("Testing days: {}", d);
+            println!("Testing sum of hours for {} days", d);
             let expected = (d as f32 * 8. * 0.8).floor() as usize;
 
             let actual = gen_calendar(d).iter().sum();
