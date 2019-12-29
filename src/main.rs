@@ -63,26 +63,26 @@ fn gen_calendar(days: usize) -> Vec<usize> {
     return calendar;
 }
 
-fn print(calendar: &Vec<usize>, breaks: &Vec<usize>) {
+fn print(calendar: &Vec<usize>, periods: &Vec<usize>) {
     println!("\nCopyright hours:");
-    print_with_breaks(calendar, breaks);
+    print_with_breaks(calendar, periods);
 
     println!("\nRemaining hours:");
-    let remaining: Vec<usize> = calendar.iter().map(|x| 8 - *x).collect();
-    print_with_breaks(&remaining, breaks);
+    let calc_remainder: Vec<usize> = calendar.iter().map(|x| 8 - *x).collect();
+    print_with_breaks(&calc_remainder, periods);
 }
 
-fn print_with_breaks(calendar: &Vec<usize>, breaks: &Vec<usize>) {
+fn print_with_breaks(calendar: &Vec<usize>, periods: &Vec<usize>) {
     let mut printed_work_days = 0;
 
-    for (i, &val) in breaks.iter().enumerate() {
+    for (i, &period) in periods.iter().enumerate() {
         if i % 2 == 0 {
-            for x in calendar.iter().skip(printed_work_days).take(val) {
-                println!("{}", *x);
+            for work_day in calendar.iter().skip(printed_work_days).take(period) {
+                println!("{}", *work_day);
             }
-            printed_work_days += val;
+            printed_work_days += period;
         } else {
-            for _ in 0..val {
+            for _ in 0..period {
                 println!(" ");
             }
         }
