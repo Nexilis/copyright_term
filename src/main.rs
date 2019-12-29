@@ -38,7 +38,7 @@ fn main() {
 
     let calendar = gen_calendar(working_days as usize);
 
-    print(&calendar, &periods);
+    print_calendar_summary(&calendar, &periods);
 }
 
 fn gen_calendar(days: usize) -> Vec<usize> {
@@ -63,30 +63,33 @@ fn gen_calendar(days: usize) -> Vec<usize> {
     return calendar;
 }
 
-fn print(calendar: &Vec<usize>, periods: &Vec<usize>) {
+fn print_calendar_summary(calendar: &Vec<usize>, periods: &Vec<usize>) {
     println!("\nCopyright hours:");
-    print_with_breaks(calendar, periods);
+    print_formatted(calendar, periods);
 
     println!("\nRemaining hours:");
     let calc_remainder: Vec<usize> = calendar.iter().map(|x| 8 - *x).collect();
-    print_with_breaks(&calc_remainder, periods);
+    print_formatted(&calc_remainder, periods);
 }
 
-fn print_with_breaks(calendar: &Vec<usize>, periods: &Vec<usize>) {
+fn print_formatted(calendar: &Vec<usize>, periods: &Vec<usize>) {
     let mut printed_work_days = 0;
 
-    for (i, &period) in periods.iter().enumerate() {
+    periods.iter().enumerate().for_each(|(i, &period)| {
         if i % 2 == 0 {
-            for work_day in calendar.iter().skip(printed_work_days).take(period) {
-                println!("{}", *work_day);
-            }
+            calendar
+                .iter()
+                .skip(printed_work_days)
+                .take(period)
+                .for_each(|work_day| println!("{}", work_day));
+
             printed_work_days += period;
         } else {
             for _ in 0..period {
                 println!(" ");
             }
         }
-    }
+    });
 }
 
 #[cfg(test)]
