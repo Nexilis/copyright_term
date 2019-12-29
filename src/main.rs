@@ -15,16 +15,11 @@ fn main() {
         .map(|x| x.trim().parse().expect("Wrong input"))
         .collect();
 
-    let mut index = 0;
-    let working_days: usize = periods.iter().fold(0, |acc, x| {
-        if index % 2 == 0 {
-            index += 1;
-            acc + *x
-        } else {
-            index += 1;
-            acc
-        }
-    });
+    let working_days: usize =
+        periods
+            .iter()
+            .enumerate()
+            .fold(0, |acc, (i, &val)| if i % 2 == 0 { acc + val } else { acc });
 
     let working_hours = (working_days * 8) as f64;
     let copyrighted = (working_hours * 0.8).floor();
@@ -32,7 +27,7 @@ fn main() {
     let copyright_ratio = copyrighted / working_hours;
 
     println!(
-        "Sum of: working days: {}, working hours: {}",
+        "Sum of working days: {}, working hours: {}",
         working_days, working_hours
     );
 
