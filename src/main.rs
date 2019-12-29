@@ -2,9 +2,11 @@ use rand::Rng;
 use std::{cmp, io};
 
 fn main() {
-    println!("Type the number of work days with breaks, e.g. 5;2;5");
+    println!("Type a number of days in a work period alternately with a number of days in a workless period, e.g. 5;2;5 where the first number is for the work period:");
     let mut user_input = String::new();
-    io::stdin().read_line(&mut user_input).expect("Error reading line");
+    io::stdin()
+        .read_line(&mut user_input)
+        .expect("Error reading line");
 
     let x1: Vec<&str> = user_input.split(';').collect();
 
@@ -14,7 +16,7 @@ fn main() {
         .collect();
 
     let mut index = 0;
-    let days: i32 = days_with_splits.iter().fold(0, |acc, x| {
+    let working_days: i32 = days_with_splits.iter().fold(0, |acc, x| {
         if index % 2 == 0 {
             index += 1;
             acc + *x
@@ -24,19 +26,19 @@ fn main() {
         }
     });
 
-    let hours = (days * 8) as f64;
-    let under = (hours * 0.8).floor();
-    let non = hours - under;
-    let precise = under / hours;
+    let working_hours = (working_days * 8) as f64;
+    let copyrighted = (working_hours * 0.8).floor();
+    let not_copyrighted = working_hours - copyrighted;
+    let copyright_ratio = copyrighted / working_hours;
 
-    println!("Whole period\n  days: {}\n  hours: {}\n", days, hours);
+    println!("Sum of: working days: {}, working hours: {}", working_days, working_hours);
 
     println!(
-        "Copyright hours\n  under: {}\n  non: {}\n\nPrecise percentage: {}\n",
-        under, non, precise,
+        "Hours copyrighted: {}, not copyrighted: {}, ratio: {}\n",
+        copyrighted, not_copyrighted, copyright_ratio,
     );
 
-    let calendar = gen_calendar(days as usize);
+    let calendar = gen_calendar(working_days as usize);
 
     print(&calendar, &days_with_splits);
 }
@@ -64,16 +66,15 @@ fn gen_calendar(days: usize) -> Vec<i32> {
 }
 
 fn print(calendar: &Vec<i32>, breaks: &Vec<i32>) {
+    println!("\nCopyright hours:");
     print_with_breaks(&calendar, &breaks);
+
+    println!("\nRemaining hours:");
     let remaining: Vec<i32> = calendar.iter().map(|x| 8 - *x).collect();
     print_with_breaks(&remaining, &breaks);
 }
 
 fn print_with_breaks(calendar: &Vec<i32>, breaks: &Vec<i32>) {
-    println!("Copyright hours");
-
-    //let lines: i32 = breaks.iter().sum();
-
     let mut index = 0;
     let mut presented = 0;
     for pair in breaks.iter().map(|x| {
@@ -100,14 +101,13 @@ mod tests {
     use crate::gen_calendar;
 
     #[test]
-    fn sum_of_hours_under_copyright_is_correct() {
-        let days = (0..101);
+    fn sum_of_copyrighted_hours_is_correct() {
+        let days = 0..101;
         for d in days {
             println!("Testing days: {}", d);
             let expected: i32 = (d as f32 * 8. * 0.8).floor() as i32;
 
             let actual = gen_calendar(d).iter().sum();
-
             assert_eq!(expected, actual);
         }
     }
