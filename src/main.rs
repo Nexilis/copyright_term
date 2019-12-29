@@ -42,22 +42,22 @@ fn main() {
 }
 
 fn gen_calendar(days: usize) -> Vec<usize> {
-    let hours = (days * 8) as f32;
-    let mut remaining = (hours * 0.8).floor() as usize;
+    let hours_total = (days * 8) as f64;
+    let mut remaining_hours_total = (hours_total * 0.8).floor() as usize;
     let mut calendar = vec![0; days];
-    while remaining > 0 {
-        let index = rand::thread_rng().gen_range(0, days);
-        let val = calendar[index];
+    while remaining_hours_total > 0 {
+        let i = rand::thread_rng().gen_range(0, days);
+        let work_hours_in_day_i = calendar[i];
 
-        if val == 0 {
-            let max_under = cmp::min(remaining + 1, 9);
-            let under_this_day = rand::thread_rng().gen_range(0, max_under);
-            calendar[index] = under_this_day;
-            remaining = remaining - under_this_day;
-        } else if val >= 8 {
+        if work_hours_in_day_i == 0 {
+            let max_additional_hours_for_day_i = cmp::min(remaining_hours_total + 1, 9);
+            let hours_for_day_i = rand::thread_rng().gen_range(0, max_additional_hours_for_day_i);
+            calendar[i] = hours_for_day_i;
+            remaining_hours_total = remaining_hours_total - hours_for_day_i;
+        } else if work_hours_in_day_i >= 8 {
         } else {
-            calendar[index] = val + 1;
-            remaining -= 1;
+            calendar[i] = work_hours_in_day_i + 1;
+            remaining_hours_total -= 1;
         }
     }
     return calendar;
