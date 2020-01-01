@@ -5,10 +5,15 @@ fn main() {
     println!("Welcome to Copyright Term Calculator.\nCheck https://github.com/Nexilis/copyright_term for the newest version.\n\n");
     println!("Type a number of days in a work period alternately with a number of days in a workless period. The first number is for the work period, i.e. '5;2;5' would mean: 5 working days, 2 free days, 5 working days.");
     println!("If you type nothing the default is going to be '5;2;5;2;5;2;5'");
-    let mut user_input = String::from("5;2;5;2;5;2;5");
+    let mut user_input = String::new();
+
     io::stdin()
         .read_line(&mut user_input)
         .expect("Error reading line");
+
+    if user_input.trim().is_empty() {
+        user_input = String::from("5;2;5;2;5;2;5");
+    }
 
     let user_input_split: Vec<&str> = user_input.split(';').collect();
 
