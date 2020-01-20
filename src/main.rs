@@ -30,7 +30,7 @@ fn main() {
             .fold(0, |acc, (i, &val)| if i % 2 == 0 { acc + val } else { acc });
 
     let working_hours = (working_days * 8) as f64;
-    let copyrighted = (working_hours * 0.8).floor();
+    let copyrighted = (working_hours * 0.7).floor();
     let not_copyrighted = working_hours - copyrighted;
     let copyright_ratio = copyrighted / working_hours;
 
@@ -51,7 +51,7 @@ fn main() {
 
 fn gen_calendar(days: usize) -> Vec<usize> {
     let h_total = (days * 8) as f64;
-    let mut remaining_h_total = (h_total * 0.8).floor() as usize;
+    let mut remaining_h_total = (h_total * 0.7).floor() as usize;
     let mut calendar = vec![0; days];
     while remaining_h_total > 0 {
         let i = rand::thread_rng().gen_range(0, days);
@@ -107,7 +107,7 @@ mod tests {
         let days = 0..101;
         for d in days {
             println!("Testing sum of hours for {} days", d);
-            let expected = (d as f32 * 8. * 0.8).floor() as usize;
+            let expected = (d as f32 * 8. * 0.7).floor() as usize;
 
             let actual = gen_calendar(d).iter().sum();
             assert_eq!(expected, actual);
