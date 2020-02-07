@@ -107,7 +107,7 @@ mod tests {
         let days = 0..101;
         for d in days {
             println!("Testing sum of hours for {} days", d);
-            let expected = (d as f32 * 8. * 0.7).floor() as usize;
+            let expected = (d as f64 * 8. * 0.7).floor() as usize;
 
             let actual = gen_calendar(d).iter().sum();
             assert_eq!(expected, actual);
